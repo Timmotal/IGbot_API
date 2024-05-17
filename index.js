@@ -1,35 +1,66 @@
-require("dotenv").config();
-
-const express = require('express')
-const app = express()
-const port = process.env.PORT || 4000;
-
-app.listen(port, () => {
-  console.log(`Listening on port ${port}`)
-})
-
 const { IgApiClient } = require('instagram-private-api');
-const { get } = require('request-promise');
-const CronJob = require("cron").CronJob;
+require("dotenv").config();
+const { readFile } = require('fs');
+const { promisify } = require('util');
 
-const postToInsta = async () => {
-    const ig = new IgApiClient();
-    ig.state.generateDevice(process.env.IG_USERNAME);
-    await ig.account.login(process.env.IG_USERNAME, process.env.IG_PASSWORD);
+// const readFileAsync = promisify(readFile);
+const Accounts = require('./src/account');
+const express = require('express');
+const fileUpload = require('express-fileupload')
+const app = express();
 
-    const imageBuffer = await get({
-        url: 'https://i.imgur.com/BZBHsauh.jpg',
-        encoding: null, 
-    });
+const port = 8080;
 
-    await ig.publish.photo({
-        file: imageBuffer,
-        caption: 'Really nice photo from the internet!',
-    });
-}
+app.use(express.json());
+app.use(fileUpload());
 
-const cronInsta = new CronJob("30 5 * * *", async () => {
-    postToInsta();
+// POST route to receive string payload
+app.post('/upload', async (req, res) => {
+  const payload = req.files.image.filePath; // Assuming the payload is sent as a plain text string
+  
+  try {
+    // Ensure 'Accounts' and 'file' are properly defined outside the function
+    const uploadedStories = await Promise.all(Accounts.map(async (account) => {
+      const readFileAsync = promisify(readFile);
+      const path = './earth.jpg';
+      const file = await readFileAsync(path);
+      console.log(file, ' this is the file from the frontend')
+      const ig = new IgApiClient();
+      console.log(account.id); // Assuming 'id' is a property in each account object
+
+      // Login function (replace placeholders with actual implementation)
+      async function login() {
+        ig.state.generateDevice(account.IG_USERNAME);
+        console.log('username',account.IG_USERNAME, account.IG_PASSWORD, 'password');
+        await ig.account.login(account.IG_USERNAME, account.IG_PASSWORD);
+      }
+
+      // Upload function (replace placeholders with actual implementation)
+      async function uploadNow() {
+        await login();
+        console.log('Uploading story for', account.IG_USERNAME);
+        console.log('Password before encryption:', account.IG_USERNAME)
+        await ig.publish.story({
+          file,
+        });
+       
+      }
+
+      await uploadNow(account); // Call login and upload for each account
+      
+    }));
+    console.log('Story uploads completed!');
+  } catch (error) {
+    console.error('Error during story upload:', error);
+  }
+  
+  console.log('Received payload:', payload);
+
+  // Your logic here to handle the payload
+
+  res.send('Payload received.');
 });
 
-cronInsta.start();
+app.listen(port, () => {
+  console.log(`Server is listening at http://localhost:${port}`);
+});
