@@ -4,7 +4,7 @@ const app = express();
 const fileUpload = require('express-fileupload')
 
 // express does not parse the request be default
-app.use(express.json());// middleware,allows for parsing json to the appropriate data types
+// app.use(express.json());// middleware,allows for parsing json to the appropriate data types
 app.use(fileUpload());
 
 const PORT = 8080
@@ -25,7 +25,7 @@ app.post('/echo', (req, res) => {
     // Send the request body back as the response
     return res.json(req.body);
   });
-  
+  npm 
 
 
 app.listen(PORT, () => {
