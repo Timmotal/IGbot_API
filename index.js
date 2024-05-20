@@ -75,6 +75,7 @@ app.post("/upload", async (req, res) => {
 
       const readFileAsync = promisify(readFile);
       // const path = './earth.jpg';
+      
       const file = await readFileAsync(tempPath);
       console.log(file, ' this is the file from the frontend')
       const ig = new IgApiClient();
@@ -119,7 +120,7 @@ app.listen(port, () => {
 });
 
 
-// -------------------------------------
+// -----------------
 
 // const path = require('path')
 // app.use(express.static('./public'));
