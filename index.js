@@ -19,7 +19,7 @@ const port = 8080;
 app.use(cors());
 app.use(express.json());
 app.use(fileUpload());
-app.use(express.static('./public'));
+app.use(express.static('./src/public'));
 
 
 
@@ -34,7 +34,7 @@ app.post("/upload", async (req, res) => {
     const uploadStoryToAccounts = await Promise.all(Accounts.map(async (account) => {
       const story = req.files.image;
 
-      const imagePath = path.join(__dirname, '/src/public/uploads/' + `${story.name}`);
+      const imagePath = path.join(__dirname, '/public/uploads/' + `${story.name}`);
       await story.mv(imagePath);
       
 
