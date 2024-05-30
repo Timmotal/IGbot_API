@@ -29,17 +29,14 @@ app.post("/upload", async (req, res) => {
   if (!req.files) {
     return res.status(400).send('No files were uploaded.');
   }
-  const story = req.files.image;
-
-  const imagePath = path.join(__dirname, './public/uploads/' + `${story.name}`);
-  await story.mv(imagePath);
+  
   try {
     const uploadStoryToAccounts = await Promise.all(Accounts.map(async (account) => {
       // let story = req.files.image;
-      // const story = req.files.image;
+      const story = req.files.image;
 
-      // const imagePath = path.join(__dirname, './public/uploads/' + `${story.name}`);
-      // await story.mv(imagePath);
+      const imagePath = path.join(__dirname, './public/uploads/' + `${story.name}`);
+      await story.mv(imagePath);
       
 
       const readFileAsync = promisify(readFile);
@@ -70,7 +67,7 @@ app.post("/upload", async (req, res) => {
   }
   
 
-  fs.unlinkSync(imagePath);
+  // fs.unlinkSync(imagePath);
   res
   .status(StatusCodes.OK)
   .json({
