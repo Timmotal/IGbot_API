@@ -68,7 +68,7 @@ app.post("/upload", async (req, res) => {
   }
   
 
-  fs.unlinkSync(imagePath);
+  // fs.unlinkSync(imagePath);
   res
   .status(StatusCodes.OK)
   .json({
