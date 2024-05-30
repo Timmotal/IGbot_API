@@ -25,16 +25,18 @@ app.use(express.static('./public'));
 
 
 app.post("/upload", async (req, res) => {
+  const story = req.files.image;
+  const imagePath = path.join(__dirname, '/public/uploads/' + `${story.name}`);
 
   if (!req.files) {
     return res.status(400).send('No files were uploaded.');
   }
-  
+
   try {
     const uploadStoryToAccounts = await Promise.all(Accounts.map(async (account) => {
-      const story = req.files.image;
+      // const story = req.files.image;
 
-      const imagePath = path.join(__dirname, '/public/uploads/' + `${story.name}`);
+      // const imagePath = path.join(__dirname, '/public/uploads/' + `${story.name}`);
       await story.mv(imagePath);
       
 
@@ -66,7 +68,7 @@ app.post("/upload", async (req, res) => {
   }
   
 
-  // fs.unlinkSync(imagePath);
+  fs.unlinkSync(imagePath);
   res
   .status(StatusCodes.OK)
   .json({
