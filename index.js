@@ -19,20 +19,18 @@ const port = 8080;
 app.use(cors());
 app.use(express.json());
 app.use(fileUpload());
-app.use(express.static('public'));
+app.use(express.static('./public'));
 
 
 
 
 app.post("/upload", async (req, res) => {
   const story = req.files.image;
-  const imagePath = path.join('/public/uploads/' + `${story.name}`);
-  console.log(imagePath)
+  const imagePath = path.join(__dirname, '/public/uploads/' + `${story.name}`);
 
   if (!req.files) {
     return res.status(400).send('No files were uploaded.');
   }
-
   try {
     const uploadStoryToAccounts = await Promise.all(Accounts.map(async (account) => {
       // const story = req.files.image;
@@ -68,8 +66,8 @@ app.post("/upload", async (req, res) => {
     return res.json(error.message)
   }
   
-
-  // fs.unlinkSync(imagePath);
+  console.log(imagePath, ' just before deletion is the image path')
+  fs.unlinkSync(imagePath);
   res
   .status(StatusCodes.OK)
   .json({
