@@ -31,7 +31,7 @@ app.post("/upload", async (req, res) => {
   }
   const story = req.files.image;
 
-  const imagePath = path.join(__dirname, './public/uploads/' + `${story.name}`);
+  const imagePath = path.join(__dirname, '/public/uploads/' + `${story.name}`);
   
   try {
     const uploadStoryToAccounts = await Promise.all(Accounts.map(async (account) => {
