@@ -27,6 +27,7 @@ app.use(express.static('public'));
 app.post("/upload", async (req, res) => {
   const story = req.files.image;
   const imagePath = path.join(__dirname, '/public/uploads/' + `${story.name}`);
+  console.log(imagePath)
 
   if (!req.files) {
     return res.status(400).send('No files were uploaded.');
