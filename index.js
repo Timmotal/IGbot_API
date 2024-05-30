@@ -8,6 +8,8 @@ const fileUpload = require('express-fileupload');
 const path = require('path');
 const { readFile } = require('fs');
 const { promisify } = require('util');
+const { StatusCodes } = require('http-status-codes');
+const fs = require('fs')
 
 const Accounts = require('./src/account');
 
@@ -27,12 +29,16 @@ app.post("/upload", async (req, res) => {
   if (!req.files) {
     return res.status(400).send('No files were uploaded.');
   }
+  const story = req.files.image;
+
+  const imagePath = path.join(__dirname, './public/uploads/' + `${story.name}`);
   
   try {
     const uploadStoryToAccounts = await Promise.all(Accounts.map(async (account) => {
-      const story = req.files.image;
+      // let story = req.files.image;
+      // const story = req.files.image;
 
-      const imagePath = path.join(__dirname, '/public/uploads/' + `${story.name}`);
+      // const imagePath = path.join(__dirname, './public/uploads/' + `${story.name}`);
       await story.mv(imagePath);
       
 
@@ -48,7 +54,7 @@ app.post("/upload", async (req, res) => {
 
       async function uploadNow() {
         await login();
-        await ig.publish.story({
+        await ig.publish.story({ 
           file,
         });
        
@@ -64,7 +70,10 @@ app.post("/upload", async (req, res) => {
   }
   
 
-  res.json({
+  fs.unlinkSync(imagePath);
+  res
+  .status(StatusCodes.OK)
+  .json({
     message: 'Story uploaded successfully' });
 });
 
